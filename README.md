@@ -36,8 +36,9 @@ Repository: `https://github.com/conDIOSalante/good-otp-web`
 
 1. Set GitHub repository secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `KIT_API_SECRET`, `KIT_FORM_ID`.
 2. Set GitHub repository variables: `PUBLIC_SITE_URL`, `PUBLIC_POSTHOG_KEY`, `PUBLIC_POSTHOG_HOST`, `ALLOWED_ORIGIN`, optional `KIT_TAG_IDS`.
-3. Push to `main` — `.github/workflows/deploy.yml` builds and publishes to Cloudflare Pages project `good-otp-web`.
-4. Configure the same function secrets in the Cloudflare Pages dashboard if preview/production scopes differ from GitHub Actions.
+3. After secrets and variables are configured, set repository variable `DEPLOY_ENABLED=true` to publish on push.
+4. Push to `main` — `.github/workflows/deploy.yml` builds and (when enabled) publishes to Cloudflare Pages project `good-otp-web`.
+5. Configure the same function secrets in the Cloudflare Pages dashboard if preview/production scopes differ from GitHub Actions.
 
 ### Option B: Git-connected Pages (Cloudflare UI)
 
