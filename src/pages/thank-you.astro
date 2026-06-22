@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../config/site';
+---
+
+<BaseLayout
+  title={`Thank you | ${siteConfig.name}`}
+  description={`Confirmation page for ${siteConfig.name} email signup.`}
+>
+  <section class="card">
+    <p class="eyebrow">You are in</p>
+    <h1>Check your inbox to confirm.</h1>
+    <p>
+      If double opt-in is enabled for this list, you will receive a confirmation email shortly. Once
+      confirmed, you will get practical weekly direction on faith, discipline, and fitness.
+    </p>
+    <p class="form-note">
+      Did not see it? Check spam or promotions, then add us to your contacts so future messages arrive
+      reliably.
+    </p>
+    <p><a href="/">Back to home</a></p>
+  </section>
+</BaseLayout>

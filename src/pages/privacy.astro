@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../config/site';
+---
+
+<BaseLayout title={`Privacy | ${siteConfig.name}`} description={`Privacy policy for ${siteConfig.name}.`}>
+  <h1>Privacy policy</h1>
+  <p class="lead">Last updated: June 22, 2026</p>
+
+  <h2>What we collect</h2>
+  <p>
+    When you join the {siteConfig.name} email list, we collect your email address and optional first name.
+    We also collect basic analytics events such as page views, button clicks, and form interactions to
+    understand what content helps people most.
+  </p>
+
+  <h2>How we use your information</h2>
+  <p>
+    We use your contact information to send the emails you requested and to improve our content and
+    outreach. Analytics data is used in aggregate to measure site performance and message effectiveness.
+  </p>
+
+  <h2>Third-party services</h2>
+  <p>
+    {siteConfig.name} uses Kit for email delivery and PostHog for privacy-conscious analytics. These
+    providers process data on our behalf under their own terms and security practices.
+  </p>
+
+  <h2>Your choices</h2>
+  <p>
+    You can unsubscribe from emails at any time using the link in any message we send. If you have
+    questions about your data, contact us through the same email address you used to subscribe.
+  </p>
+
+  <p><a href="/">Return to home</a></p>
+</BaseLayout>

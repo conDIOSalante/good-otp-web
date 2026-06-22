@@ -1,0 +1,12 @@
+---
+import { siteConfig } from '../config/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <nav aria-label="Footer">
+    <a href={siteConfig.links.privacy}>Privacy</a>
+    <a href="#join">Join the list</a>
+  </nav>
+  <p>&copy; {year} {siteConfig.name}. Built for quiet growth in Christ.</p>
+</footer>

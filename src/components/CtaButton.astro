@@ -1,0 +1,56 @@
+---
+import { siteConfig } from '../config/site';
+
+interface Props {
+  ctaId: string;
+  label: string;
+  href: string;
+  variant?: 'primary' | 'secondary';
+  location: string;
+  destinationType?: 'form' | 'internal_page' | 'external_channel' | 'download';
+}
+
+const {
+  ctaId,
+  label,
+  href,
+  variant = 'primary',
+  location,
+  destinationType = href.startsWith('#') ? 'form' : href.startsWith('http') ? 'external_channel' : 'internal_page',
+} = Astro.props;
+---
+
+<a
+  class={`button button--${variant} js-cta`}
+  href={href}
+  data-cta-id={ctaId}
+  data-cta-label={label}
+  data-cta-variant={variant}
+  data-cta-location={location}
+  data-destination-type={destinationType}
+  data-destination-url={href}
+>
+  {label}
+</a>
+
+<script>
+  import { trackCtaClick } from '../scripts/analytics';
+
+  document.querySelectorAll('.js-cta').forEach((element) => {
+    element.addEventListener('click', () => {
+      trackCtaClick({
+        ctaId: element.getAttribute('data-cta-id') ?? 'unknown',
+        ctaLabel: element.getAttribute('data-cta-label') ?? '',
+        ctaVariant: (element.getAttribute('data-cta-variant') as 'primary' | 'secondary' | 'text_link') ?? 'primary',
+        ctaLocation: element.getAttribute('data-cta-location') ?? 'unknown',
+        destinationType:
+          (element.getAttribute('data-destination-type') as
+            | 'form'
+            | 'internal_page'
+            | 'external_channel'
+            | 'download') ?? 'internal_page',
+        destinationUrl: element.getAttribute('data-destination-url') ?? '',
+      });
+    });
+  });
+</script>

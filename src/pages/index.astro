@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaButton from '../components/CtaButton.astro';
+import LeadForm from '../components/LeadForm.astro';
+import { siteConfig } from '../config/site';
+---
+
+<BaseLayout title={`${siteConfig.name} | ${siteConfig.tagline}`}>
+  <p class="eyebrow">{siteConfig.name}</p>
+  <h1>Build quiet strength in Christ, discipline, and fitness.</h1>
+  <p class="lead">
+    For introverted Christians and veterans who feel stuck, overlooked, or anxious — practical mentorship
+    without the noise. Real stories, biblical wisdom, and steady accountability.
+  </p>
+
+  <div class="hero-actions">
+    <CtaButton
+      ctaId="hero_primary"
+      label={siteConfig.primaryOffer.ctaLabel}
+      href="#join"
+      location="hero"
+      destinationType="form"
+    />
+  </div>
+
+  <ul class="pill-list">
+    <li>Christ over anxiety — faith that meets real life.</li>
+    <li>Discipline and consistency — small steps that compound.</li>
+    <li>Fitness as stewardship — strength for the work God gives you.</li>
+  </ul>
+
+  <LeadForm formLocation="hero" />
+</BaseLayout>

@@ -1,0 +1,164 @@
+---
+import { siteConfig } from '../config/site';
+
+interface Props {
+  formLocation: 'hero' | 'inline' | 'footer';
+  heading?: string;
+}
+
+const { formLocation, heading = siteConfig.primaryOffer.title } = Astro.props;
+const formId = 'email_capture_v1';
+const offerId = siteConfig.primaryOffer.id;
+---
+
+<section class="card" id="join" data-form-location={formLocation}>
+  <h2>{heading}</h2>
+  <p class="form-note">
+    One email each week with practical direction on faith, discipline, and fitness. No hype. No spam.
+  </p>
+
+  <form class="form-grid js-lead-form" novalidate>
+    <input type="hidden" name="form_id" value={formId} />
+    <input type="hidden" name="form_location" value={formLocation} />
+    <input type="hidden" name="offer_id" value={offerId} />
+
+    <div class="form-field">
+      <label for={`first-name-${formLocation}`}>First name (optional)</label>
+      <input
+        id={`first-name-${formLocation}`}
+        name="first_name"
+        type="text"
+        autocomplete="given-name"
+        maxlength="80"
+      />
+    </div>
+
+    <div class="form-field">
+      <label for={`email-${formLocation}`}>Email</label>
+      <input
+        id={`email-${formLocation}`}
+        name="email"
+        type="email"
+        autocomplete="email"
+        inputmode="email"
+        required
+        maxlength="254"
+      />
+    </div>
+
+    <div class="hp-field" aria-hidden="true">
+      <label for={`website-${formLocation}`}>Website</label>
+      <input id={`website-${formLocation}`} name="website" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <button class="button button--primary" type="submit">
+      {siteConfig.primaryOffer.ctaLabel}
+    </button>
+
+    <p class="form-note">
+      By joining, you agree to receive emails from {siteConfig.name}. Read our
+      <a href={siteConfig.links.privacy}>privacy policy</a>.
+    </p>
+
+    <p class="form-error" hidden role="alert"></p>
+  </form>
+</section>
+
+<script define:vars={{ formId, offerId, thankYouPath: siteConfig.links.thankYou }}>
+  import { trackLeadFormStarted, trackLeadFormSubmitted } from '../scripts/analytics';
+
+  document.querySelectorAll('.js-lead-form').forEach((formElement) => {
+    const form = formElement;
+    const section = form.closest('[data-form-location]');
+    const formLocation = section?.getAttribute('data-form-location') ?? 'inline';
+    const errorNode = form.querySelector('.form-error');
+
+    const markStarted = () => {
+      trackLeadFormStarted({
+        formId,
+        formLocation,
+        offerId,
+      });
+    };
+
+    form.querySelectorAll('input').forEach((input) => {
+      input.addEventListener('focus', markStarted, { once: true });
+      input.addEventListener('input', markStarted, { once: true });
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!(form instanceof HTMLFormElement) || !(errorNode instanceof HTMLElement)) {
+        return;
+      }
+
+      errorNode.hidden = true;
+      errorNode.textContent = '';
+
+      const formData = new FormData(form);
+      const payload = {
+        email: String(formData.get('email') ?? '').trim(),
+        first_name: String(formData.get('first_name') ?? '').trim(),
+        website: String(formData.get('website') ?? '').trim(),
+        form_id: formId,
+        form_location: formLocation,
+        offer_id: offerId,
+      };
+
+      if (!payload.email) {
+        errorNode.textContent = 'Please enter your email address.';
+        errorNode.hidden = false;
+        return;
+      }
+
+      const submitButton = form.querySelector('button[type="submit"]');
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting…';
+      }
+
+      try {
+        const response = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await response.json().catch(() => ({ ok: false, message: 'Unexpected response.' }));
+
+        if (!response.ok || !result.ok) {
+          throw new Error(result.message ?? 'Unable to subscribe right now.');
+        }
+
+        trackLeadFormSubmitted({
+          formId,
+          formLocation,
+          offerId,
+          submissionResult: 'success',
+        });
+
+        window.location.href = thankYouPath;
+      } catch (error) {
+        trackLeadFormSubmitted({
+          formId,
+          formLocation,
+          offerId,
+          submissionResult: 'error',
+        });
+
+        errorNode.textContent =
+          error instanceof Error ? error.message : 'Something went wrong. Please try again in a moment.';
+        errorNode.hidden = false;
+      } finally {
+        if (submitButton instanceof HTMLButtonElement) {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Join the list';
+        }
+      }
+    });
+  });
+</script>
